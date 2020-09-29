@@ -1,0 +1,16 @@
+{
+  "name": "auto-post",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://gitlab.office.tengyue360.com/Carroll/auto-post.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
