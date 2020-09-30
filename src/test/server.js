@@ -16,12 +16,16 @@ http.createServer((req, res) => {
     let data = [];
     req.on("data", chunk => {
         data.push(chunk);
+        console.log(chunk);
     });
     req.on("end", () => {
         let t = JSON.parse(data);
         console.log("parse data", t);
     })
-    res.setHeader("Content-Type", "application/json");
+    // console.log(`response http version: ${res}`)
+    res.setHeader("Content-Length", Buffer.byteLength(resData));
+    res.setHeader("Content-Type", "application/x-www-form-urlencoded");
+
     res.write(resData);
     res.end();
 

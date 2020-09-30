@@ -11,11 +11,15 @@ Function.prototype.curry = function(...rest){
  * @return {string}
  */
 function getUrl(config) {
-    let protocol = config.protocol || "http";
-    let hostname = config.hostname || "localhost";
-    let path = config.path || "/";
-    let port = config.port || 80;
-    return `${protocol}://${hostname}:${port}${path}`;
+    if(config.protocol && config.hostname && config.path && config.port) {
+        let protocol = config.protocol || "http";
+        let hostname = config.hostname || "localhost";
+        let path = config.path || "/";
+        let port = config.port || 80;
+        return `${protocol}://${hostname}:${port}${path}`;
+    } else {
+        return "";
+    }
 }
 
 module.exports = {

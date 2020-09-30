@@ -1,19 +1,27 @@
+const { timingSafeEqual } = require("crypto");
 // const path = require("path");
 const http = require("http");
 const { parse } = require("path");
 
 let util = require("./../util/util.js");
-
-function Zxios(config) {
-
+/**
+ * 
+ * @param {ZxiosOption} defaultConfig 
+ */
+function Zxios(defaultConfig) {
+    this.requestUseQue = [];
+    this.respondUseQue = [];
+    this.defaultConfig = defaultConfig || {};    
 }
 /**
  * @param {ZxiosOption} config 
  * @return {Promise} 
 */
 Zxios.prototype.request = function (config) {
-    // let request = http.get.curry(url);
     let url = util.getUrl(config);
+    if(!url) {
+        url = `${this.baseUrl}${config.path}`;
+    }
     return new Promise(function (resolve, reject) {
         let postData = config.data;
         let req = http.request(config, (res) => {
@@ -53,12 +61,43 @@ Zxios.prototype.request = function (config) {
         })
         req.on("error", (e) => {
             console.log(`请求遇到问题${e}`)
-        })
+        });
         req.write(postData);
         req.end();
     })
 }
 
+/**
+ * 
+ * @param {Function} handler 
+ */
+Zxios.prototype.requestUse = function(handler) {
+    try {
+        if(handler instanceof Function) {
+            this.requestUseQue.push(handler);
+        } else {
+            throw new Error(`handler is not a function`);
+        }  
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+/**
+ * 
+ * @param {Function} handler 
+ */
+Zxios.prototype.respondUse = function (handler) {
+    try {
+        if(handler instanceof Function) {
+            this.respondUseQue.push(handler);
+        } else {
+            throw new Error(`handler is not a function`);
+        }  
+    } catch (error) {
+        console.error(error);
+    }
+}
 
 /**
  * 柯里化功能引入的测试
