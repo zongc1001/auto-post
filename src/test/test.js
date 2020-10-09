@@ -2,10 +2,12 @@ const Zxios = require("./../zxios/zxios.js");
 
 let zxios = new Zxios();
 
-let postData = JSON.stringify({
+let postData = {
     "msg": "hello world",
     "age": 100
-})
+}
+
+let jsonPostData = JSON.stringify(postData);
 
 zxios.request(
     {
@@ -13,7 +15,7 @@ zxios.request(
         method: "POST",
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            'Content-Length': Buffer.byteLength(postData)
+            'Content-Length': Buffer.byteLength( jsonPostData)
         },
         data: postData,
     }

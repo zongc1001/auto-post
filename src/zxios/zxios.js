@@ -1,4 +1,3 @@
-const { timingSafeEqual } = require("crypto");
 // const path = require("path");
 const http = require("http");
 const { parse } = require("path");
@@ -23,8 +22,12 @@ Zxios.prototype.request = function (config) {
         url = `${this.baseUrl}${config.path}`;
     }
     return new Promise(function (resolve, reject) {
-        let postData = config.data;
+        let postData = [];
+        Object.keys(config.data).forEach(x => {
+            postData.push(Buffer.from(x, "utf-8"));
+        });
         let req = http.request(config, (res) => {
+            console.log("res: ", res);
             const contentType = res.headers["content-type"];
             const { statusCode } = res;
             let error;
@@ -38,7 +41,6 @@ Zxios.prototype.request = function (config) {
                 );
             }
             if (error) {
-                // console.error(error.message);
                 res.resume();
                 reject(error);
             } else {
@@ -62,7 +64,7 @@ Zxios.prototype.request = function (config) {
         req.on("error", (e) => {
             console.log(`请求遇到问题${e}`)
         });
-        req.write(postData);
+        req.write(JSON.stringify(config.data));
         req.end();
     })
 }

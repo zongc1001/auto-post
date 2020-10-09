@@ -24,7 +24,7 @@ http.createServer((req, res) => {
     })
     // console.log(`response http version: ${res}`)
     res.setHeader("Content-Length", Buffer.byteLength(resData));
-    res.setHeader("Content-Type", "application/x-www-form-urlencoded");
+    res.setHeader("Content-Type", "application/json");
 
     res.write(resData);
     res.end();

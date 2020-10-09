@@ -1,13 +1,13 @@
 const BaseModel = require("./BaseModel")
-
 class Login extends BaseModel{
-    login(data) {
-        this.post({
+    login(config) {
+        Object.assign(config, {
             path: "/api/admin/user/login",
-            data: data,
-        }).then(res => {
-            console.log(res);
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
         })
+        return this.request(config);
     }
 }
 
