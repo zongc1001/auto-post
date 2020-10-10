@@ -1,6 +1,7 @@
 // const path = require("path");
 const http = require("http");
 const { parse } = require("path");
+const fs = require("fs");
 
 let util = require("./../util/util.js");
 /**
@@ -10,24 +11,31 @@ let util = require("./../util/util.js");
 function Zxios(defaultConfig) {
     this.requestUseQue = [];
     this.respondUseQue = [];
-    this.defaultConfig = defaultConfig || {};    
+    this.defaultConfig = defaultConfig || {};
 }
 /**
  * @param {ZxiosOption} config 
  * @return {Promise} 
 */
 Zxios.prototype.request = function (config) {
-    let url = util.getUrl(config);
-    if(!url) {
-        url = `${this.baseUrl}${config.path}`;
-    }
-    return new Promise(function (resolve, reject) {
-        let postData = [];
-        Object.keys(config.data).forEach(x => {
-            postData.push(Buffer.from(x, "utf-8"));
-        });
+    this.requestUseQue.forEach( x => {
+        x(config);
+    });
+    return new Promise((resolve, reject) => {
+        
+        config = Object.assign(JSON.parse(JSON.stringify(this.defaultConfig)), config);
+        const boundaryKey = Math.random().toString(16).slice(2);
+        if (config.headers !== undefined) {
+            if (/^multipart\/form-data/.test(config.headers["Content-Type"])) {
+                config.headers["Content-Type"] = config.headers["Content-Type"].concat(
+                    `; boundary=${boundaryKey}`);
+            }
+        } else {
+            req.write(JSON.stringify(config.data));
+            req.end();
+        }
+        console.log("最终的config：", config);
         let req = http.request(config, (res) => {
-            console.log("res: ", res);
             const contentType = res.headers["content-type"];
             const { statusCode } = res;
             let error;
@@ -46,6 +54,13 @@ Zxios.prototype.request = function (config) {
             } else {
                 res.setEncoding("utf-8");
                 let rawData = [];
+                console.log(res.headers);
+
+                //可以通过写文件的方式来模拟记住我的功能。
+                // fs.writeFile("./auth.txt", res.headers.authorization, err => {
+                //     console.error(err);
+                // });
+                
                 res.on("data", chunk => { rawData.push(chunk); });
                 res.on("end", () => {
                     try {
@@ -61,11 +76,33 @@ Zxios.prototype.request = function (config) {
                 })
             }
         })
+
+
+        if (config.headers !== undefined) {
+            if (/^multipart\/form-data/.test(config.headers["Content-Type"])) {
+                let temp = "";
+                Object.keys(config.data).forEach(x => {
+                    let t = `--${boundaryKey}\r\n` +
+                        `Content-Disposition: form-data; name="${x}";\r\n\r\n` +
+                        `${config.data[x]}\r\n`;
+                    temp += t;
+                })
+                req.write(temp);
+                req.end('--' + boundaryKey + '--' + '\r\n');
+            }
+        } else {
+            req.write(JSON.stringify(config.data));
+            req.end();
+
+        }
+
+
         req.on("error", (e) => {
             console.log(`请求遇到问题${e}`)
         });
-        req.write(JSON.stringify(config.data));
-        req.end();
+
+
+
     })
 }
 
@@ -73,13 +110,13 @@ Zxios.prototype.request = function (config) {
  * 
  * @param {Function} handler 
  */
-Zxios.prototype.requestUse = function(handler) {
+Zxios.prototype.requestUse = function (handler) {
     try {
-        if(handler instanceof Function) {
+        if (handler instanceof Function) {
             this.requestUseQue.push(handler);
         } else {
             throw new Error(`handler is not a function`);
-        }  
+        }
     } catch (error) {
         console.error(error);
     }
@@ -91,11 +128,11 @@ Zxios.prototype.requestUse = function(handler) {
  */
 Zxios.prototype.respondUse = function (handler) {
     try {
-        if(handler instanceof Function) {
+        if (handler instanceof Function) {
             this.respondUseQue.push(handler);
         } else {
             throw new Error(`handler is not a function`);
-        }  
+        }
     } catch (error) {
         console.error(error);
     }

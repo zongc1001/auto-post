@@ -1,6 +1,3 @@
-declare interface Headers {
-
-}
 
 declare interface ZxiosOption {
     hostname: string,
@@ -8,8 +5,7 @@ declare interface ZxiosOption {
     path: string,
     method: string,
     protocol: string,
-    path: string,
     auth?: string,
-    headers?: Headers,
+    headers?: Object,
     data?: Object,
 }

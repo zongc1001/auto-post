@@ -7,7 +7,7 @@ class Login extends BaseModel{
                 'Content-Type': 'multipart/form-data',
             },
         })
-        return this.request(config);
+        return this.post(config);
     }
 }
 

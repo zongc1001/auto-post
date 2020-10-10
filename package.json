@@ -15,5 +15,8 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.20.0"
+  },
+  "devDependencies": {
+    "md5": "^2.3.0"
   }
 }

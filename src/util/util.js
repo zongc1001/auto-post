@@ -1,4 +1,3 @@
-
 Function.prototype.curry = function(...rest){
     let args = rest, that = this;
     return function(...rest) {

@@ -1,4 +1,5 @@
 const Zxios = require("../zxios/zxios");
+const fs = require("fs");
 const protocol = "http:",
     hostname = "localhost",
     port = 8080;
@@ -9,10 +10,29 @@ const zxios = new Zxios({
     port
 });
 
+/**
+ * 
+ * @param {ZxiosOption} config 
+ * @return {ZxiosOption}
+ */
+let addAuth = function (config) {
+    try {
+        const data = fs.readFileSync("./auth.txt", "utf-8")
+        console.log(data);
+        config.headers.Authorization = data;
+    } catch (error) {
+        console.error(error);
+    }
+    return config;
+}
+
+
+zxios.requestUse(addAuth);
+
 class BaseModel {
 
     get(config) {
-        Object.assign(config, zxios.defaultConfig, { method: "GET" });
+        Object.assign(config, { method: "GET" });
         return zxios.request(config);
     }
     /**
@@ -21,12 +41,13 @@ class BaseModel {
      * @return {Promise} 
      */
     post(config) {
-        Object.assign(config, zxios.defaultConfig, { 'Content-Type' : 'multipart/form-data', "method": "POST" });
-        let data = config.data;
-        let formData = {};
-        Object.keys(data).forEach(x => {
-            formData[x];
-        })
+        //添加post方法的默认配置
+        Object.assign(config, { method: "POST" });
+        // let data = config.data;
+        // let formData = {};
+        // Object.keys(data).forEach(x => {
+        //     formData[x];
+        // })
         return zxios.request(config);
     }
 }
