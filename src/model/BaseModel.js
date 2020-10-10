@@ -43,11 +43,6 @@ class BaseModel {
     post(config) {
         //添加post方法的默认配置
         Object.assign(config, { method: "POST" });
-        // let data = config.data;
-        // let formData = {};
-        // Object.keys(data).forEach(x => {
-        //     formData[x];
-        // })
         return zxios.request(config);
     }
 }

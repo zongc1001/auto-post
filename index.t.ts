@@ -6,6 +6,13 @@ declare interface ZxiosOption {
     method: string,
     protocol: string,
     auth?: string,
-    headers?: Object,
+    headers?: Header,
     data?: Object,
 }
+
+declare interface Header {
+    "Content-Type": String,
+    Authorization: String,
+}
+
+

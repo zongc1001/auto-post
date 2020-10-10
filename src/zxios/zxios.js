@@ -18,11 +18,10 @@ function Zxios(defaultConfig) {
  * @return {Promise} 
 */
 Zxios.prototype.request = function (config) {
-    this.requestUseQue.forEach( x => {
+    this.requestUseQue.forEach(x => {
         x(config);
     });
     return new Promise((resolve, reject) => {
-        
         config = Object.assign(JSON.parse(JSON.stringify(this.defaultConfig)), config);
         const boundaryKey = Math.random().toString(16).slice(2);
         if (config.headers !== undefined) {
@@ -30,11 +29,8 @@ Zxios.prototype.request = function (config) {
                 config.headers["Content-Type"] = config.headers["Content-Type"].concat(
                     `; boundary=${boundaryKey}`);
             }
-        } else {
-            req.write(JSON.stringify(config.data));
-            req.end();
         }
-        console.log("最终的config：", config);
+        console.log("最终的请求头：", config.headers);
         let req = http.request(config, (res) => {
             const contentType = res.headers["content-type"];
             const { statusCode } = res;
@@ -56,11 +52,7 @@ Zxios.prototype.request = function (config) {
                 let rawData = [];
                 console.log(res.headers);
 
-                //可以通过写文件的方式来模拟记住我的功能。
-                // fs.writeFile("./auth.txt", res.headers.authorization, err => {
-                //     console.error(err);
-                // });
-                
+
                 res.on("data", chunk => { rawData.push(chunk); });
                 res.on("end", () => {
                     try {
@@ -78,18 +70,27 @@ Zxios.prototype.request = function (config) {
         })
 
 
-        if (config.headers !== undefined) {
-            if (/^multipart\/form-data/.test(config.headers["Content-Type"])) {
-                let temp = "";
-                Object.keys(config.data).forEach(x => {
-                    let t = `--${boundaryKey}\r\n` +
+        if (config.headers !== undefined &&
+            /^multipart\/form-data/.test(config.headers["Content-Type"])) {
+            let temp = "";
+            Object.keys(config.data).forEach(x => {
+                let t;
+                if (x === "file") {
+                    t = `--${boundaryKey}\r\n` +
+                        `Content-Disposition: form-data; name="${x}"; filename="blob"\r\n` +
+                        `Content-Type: application/octet-stream\r\n\r\n` +
+                        `${config.data[x]}\r\n`;
+                } else {
+                    t = `--${boundaryKey}\r\n` +
                         `Content-Disposition: form-data; name="${x}";\r\n\r\n` +
                         `${config.data[x]}\r\n`;
-                    temp += t;
-                })
-                req.write(temp);
-                req.end('--' + boundaryKey + '--' + '\r\n');
-            }
+                }
+
+                temp += t;
+            })
+            req.write(temp);
+            req.end('--' + boundaryKey + '--' + '\r\n');
+
         } else {
             req.write(JSON.stringify(config.data));
             req.end();

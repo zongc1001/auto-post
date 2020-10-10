@@ -14,7 +14,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.20.0"
+    "axios": "^0.20.0",
+    "spark-md5": "^3.0.1"
   },
   "devDependencies": {
     "md5": "^2.3.0"
