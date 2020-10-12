@@ -30,7 +30,7 @@ Zxios.prototype.request = function (config) {
                     `; boundary=${boundaryKey}`);
             }
         }
-        console.log("最终的请求头：", config.headers);
+        // console.log("最终的请求头：", config.headers);
         let req = http.request(config, (res) => {
             const contentType = res.headers["content-type"];
             const { statusCode } = res;
@@ -50,22 +50,24 @@ Zxios.prototype.request = function (config) {
             } else {
                 res.setEncoding("utf-8");
                 let rawData = [];
-                console.log(res.headers);
 
 
                 res.on("data", chunk => { rawData.push(chunk); });
                 res.on("end", () => {
                     try {
                         const parsedData = JSON.parse(rawData);
-                        console.log("parsedData", parsedData);
-                        resolve(parsedData);
+                        // console.log("parsedData", parsedData);
+                        resolve({
+                            headers: res.headers,
+                            data: parsedData
+                        });
                     } catch (error) {
                         reject(error);
                     }
                 })
-                res.on("close", () => {
-                    console.log("底层连接已经关闭");
-                })
+                // res.on("close", () => {
+                    // console.log("底层连接已经关闭");
+                // })
             }
         })
 

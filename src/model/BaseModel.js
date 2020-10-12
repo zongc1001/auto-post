@@ -10,6 +10,9 @@ const zxios = new Zxios({
     port
 });
 
+const USER_HOME = process.env.HOME || process.env.USERPROFILE;
+
+
 /**
  * 
  * @param {ZxiosOption} config 
@@ -17,11 +20,10 @@ const zxios = new Zxios({
  */
 let addAuth = function (config) {
     try {
-        const data = fs.readFileSync("./auth.txt", "utf-8")
-        console.log(data);
+        const data = fs.readFileSync(`${USER_HOME}/.zxiosconfig`, "utf-8")
         config.headers.Authorization = data;
     } catch (error) {
-        console.error(error);
+        console.log("没有已存在的登陆信息");
     }
     return config;
 }

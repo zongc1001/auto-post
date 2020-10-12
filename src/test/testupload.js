@@ -21,4 +21,4 @@ let config = {
     }
 };
 // console.log(config);
-software.upload(config)
+software.upload(config).then(res => console.log(res));

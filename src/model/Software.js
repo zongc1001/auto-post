@@ -5,19 +5,6 @@ class Software extends BaseModel {
    * 
    * @param {ZxiosOption} config 
    */
-  install(config) {
-    Object.assign(config, {
-      path: "/api/admin/user/login",  //改成install的
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-    return this.post(config);
-  }
-  /**
-   * 
-   * @param {ZxiosOption} config 
-   */
   getList(config) {
     Object.assign(config, {
       path: "/api/admin/package/list",
