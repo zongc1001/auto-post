@@ -55,6 +55,7 @@ Zxios.prototype.request = function (config) {
                 res.on("data", chunk => { rawData.push(chunk); });
                 res.on("end", () => {
                     try {
+                        // console.log(rawData);
                         const parsedData = JSON.parse(rawData);
                         // console.log("parsedData", parsedData);
                         resolve({
@@ -94,7 +95,11 @@ Zxios.prototype.request = function (config) {
             req.end('--' + boundaryKey + '--' + '\r\n');
 
         } else {
-            req.write(JSON.stringify(config.data));
+            if(config.data) {
+                req.write(JSON.stringify(config.data));
+            } else {
+                req.write("");
+            }
             req.end();
 
         }
