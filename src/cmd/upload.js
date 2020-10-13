@@ -59,12 +59,12 @@ function handle(resolve, reject) {
         },
     ]).then(answer => {
         answer.appType = answer.appType === '系统软件' ? 1 : 0;
-        console.log(answer);
+        // console.log(answer);
         let data = fs.readFileSync(answer.filePath, "utf-8");
         let md5 = spark.hash(data);
         let stat = fs.statSync(answer.filePath);
         let size = stat.size;
-        let name = answer.filePath.split('//').pop();
+        let name = answer.filePath.split('/').pop();
         function upload() {
             let config = {
                 data: {
@@ -82,9 +82,10 @@ function handle(resolve, reject) {
             software.upload(
                 config
             ).then(res => {
-                resolve(res.data.data.id);
+                // console.log("config", config);
+                // console.log("res",res);
                 let id = res.data.data.id;
-                console.log(res);
+                // console.log(res);
                 let param = {
                     data: {
                         fileId: id,
@@ -93,11 +94,11 @@ function handle(resolve, reject) {
                         appVersion: answer.appVersion,
                         appPath: answer.appPath,
                     }
-                } 
+                }
                 software.save(
                     param
                 ).then(res => {
-                    console.log(res);
+                    resolve(res);
                 })
             })
         }
