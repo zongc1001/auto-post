@@ -5,9 +5,9 @@ var software = require("../model/Software");
 
 let table = {
     appType: {
-        '系统软件':1,
-        '直播软件':2,
-        '课中软件':3,
+        '系统软件': 1,
+        '直播软件': 2,
+        '课中软件': 3,
     },
     appPath: {
         '系统软件': 'C:\\Program Files\\YunYing\\YunYing.exe',
@@ -78,24 +78,20 @@ function handle(resolve, reject) {
         function upload() {
             let config = {
                 data: {
-                    // chunk,
-                    // chunks,
+
                     chunk: 0,
                     chunks: 1,
                     size,
                     md5,
                     name,
-                    // file: data.slice(chunk * chunkSize, Math.min(size, chunk * chunkSize + chunkSize))
+
                     file: data
                 }
             };
             software.upload(
                 config
             ).then(res => {
-                // console.log("config", config);
-                // console.log("res",res);
                 let id = res.data.data.id;
-                // console.log(res);
                 let param = {
                     data: {
                         fileId: id,

@@ -64,11 +64,24 @@ class Software extends BaseModel {
     return this.get(config);
   }
   
+  // TODO: 如果知道了后端的详细接口，可以一次性将数据全部返回或者是知道了可以返回数据的总大小的接口，可以使用promise.all去做改进
+  
+  // anotherGetSchoolDeviceList(config) {
+  //   let self = this;
+  //   Object.assign(config, {
+  //     path: "/api/admin/device/reduce/list",
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     }
+  //   })
+
+  //   Promise.all()
+  // }
 
   getSchoolDeviceList(config) {
     let that = this;
     return new Promise(function (resolve, reject) {
-
+      
       Object.assign(config, {
         path: "/api/admin/device/reduce/list",
         headers: {

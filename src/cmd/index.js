@@ -16,7 +16,8 @@ function ask() {
                     choices: [
                         'Upload a package',
                         'Create a update',
-                        'All of the above'
+                        'All of the above',
+                        'Exit',
                     ],
                 },
             ])
@@ -28,6 +29,8 @@ function ask() {
             return update();
         } else if(res.operation === 'All of the above') {
             return uploadAndUpdate();
+        } else if(res.operation === 'Exit') {
+            throw 'Bye.';
         }
     }).then(res => {
         if (res.data.errno === 200) {
@@ -47,7 +50,7 @@ function ask() {
         if(answer.continue) {
             ask();
         } else {
-            console.log("Bye.");
+            throw 'Bye.'
         }
     }).catch(err => {
         console.error(err);

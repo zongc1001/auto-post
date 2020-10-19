@@ -1,9 +1,11 @@
 // const path = require("path");
 const http = require("http");
-const body = require("../util/body");
 const bodyHelper = require("../util/body");
 
 let util = require("./../util/util.js");
+
+
+
 /**
  * 
  * @param {ZxiosOption} defaultConfig 
@@ -26,7 +28,6 @@ Zxios.prototype.request = function (config) {
 
         let bodyContent = bodyHelper(config);
         console.log("bodyContent", bodyContent);
-
         console.log("最终的请求配置：", config);
         let req = http.request(config, (res) => {
             const contentType = res.headers["content-type"];
@@ -72,36 +73,7 @@ Zxios.prototype.request = function (config) {
         req.write(bodyContent);
         req.end();
 
-        // if (config.headers !== undefined &&
-        //     /^multipart\/form-data/.test(config.headers["Content-Type"])) {
-        //     let temp = "";
-        //     Object.keys(config.data).forEach(x => {
-        //         let t;
-        //         if (x === "file") {
-        //             t = `--${boundaryKey}\r\n` +
-        //                 `Content-Disposition: form-data; name="${x}"; filename="blob"\r\n` +
-        //                 `Content-Type: application/octet-stream\r\n\r\n` +
-        //                 `${config.data[x]}\r\n`;
-        //         } else {
-        //             t = `--${boundaryKey}\r\n` +
-        //                 `Content-Disposition: form-data; name="${x}";\r\n\r\n` +
-        //                 `${config.data[x]}\r\n`;
-        //         }
-
-        //         temp += t;
-        //     })
-        //     req.write(temp);
-        //     req.end('--' + boundaryKey + '--' + '\r\n');
-
-        // } else {
-        //     if(config.data) {
-        //         req.write(JSON.stringify(config.data));
-        //     } else {
-        //         req.write("");
-        //     }
-        //     req.end();
-        // }
-
+        
 
         req.on("error", (e) => {
             console.log(`请求遇到问题${e}`)

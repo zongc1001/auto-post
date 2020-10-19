@@ -14,7 +14,7 @@ function handle(resolve, reject) {
         Object.assign(pair, JSON.parse(data));
         temp = Promise.resolve(pair);
     } catch (error) {
-        console.log(error);
+        console.error(error);
         temp = inquirer
             .prompt([
                 {
@@ -46,7 +46,7 @@ function handle(resolve, reject) {
             }).then(res => {
                 // console.log("res", res);
                 if (res.data.errno !== 200) {
-                    console.log(res.data.error);
+                    console.error(res.data.error);
                     resolve(new Promise(handle));
                 } else {
                     fs.writeFile(
@@ -58,10 +58,10 @@ function handle(resolve, reject) {
                         },
                         err => {
                             if (err) {
-                                console.log("saving auth fail:" + err);
+                                console.info("saving auth fail:" + err);
                                 resolve(false);
                             } else {
-                                console.log("saving auth success");
+                                console.info("saving auth success");
                                 resolve(true);
                             }
                         }
