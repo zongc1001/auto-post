@@ -2,6 +2,20 @@ var inquirer = require("inquirer");
 const spark = require("spark-md5");
 var fs = require("fs");
 var software = require("../model/Software");
+
+let table = {
+    appType: {
+        '系统软件':1,
+        '直播软件':2,
+        '课中软件':3,
+    },
+    appPath: {
+        '系统软件': 'C:\\Program Files\\YunYing\\YunYing.exe',
+        '直播软件': 'C:\\Program Files\\yunying-desktop\\yunying-desktop.exe',
+        '课中软件': 'C:\\Program Files\\tengyue\\tengyue.exe',
+    }
+}
+
 function fileExist(value) {
     let stat = fs.statSync(value);
     if (stat) return true;
@@ -43,22 +57,18 @@ function handle(resolve, reject) {
             type: 'list',
             name: "appType",
             message: "What's the package type?",
-            choices: [
-                '系统软件',
-                '直播软件'
-            ]
+            choices: Object.keys(table.appType)
         },
         {
             type: 'input',
             name: "appPath",
             message: "Enter the main program path",
             default: function (answer) {
-                return answer.appType === '系统软件' ? 'C:\\Program Files\\YunYing\\YunYing.exe'
-                    : 'C:\\Program Files\\yunying-desktop\\yunying-desktop.exe';
+                return table.appPath[answer.appType];
             }
         },
     ]).then(answer => {
-        answer.appType = answer.appType === '系统软件' ? 1 : 0;
+        answer.appType = table.appType[answer.appType];
         // console.log(answer);
         let data = fs.readFileSync(answer.filePath, "utf-8");
         let md5 = spark.hash(data);

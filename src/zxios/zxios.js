@@ -21,16 +21,8 @@ Zxios.prototype.request = function (config) {
     this.requestUseQue.forEach(x => {
         x(config);
     });
-    //TODO：使用策略模式进行封装，将
     return new Promise((resolve, reject) => {
         config = Object.assign(JSON.parse(JSON.stringify(this.defaultConfig)), config);
-        // const boundaryKey = Math.random().toString(16).slice(2);
-        // if (config.headers !== undefined) {
-        //     if (/^multipart\/form-data/.test(config.headers["Content-Type"])) {
-        //         config.headers["Content-Type"] = config.headers["Content-Type"].concat(
-        //             `; boundary=${boundaryKey}`);
-        //     }
-        // }
 
         let bodyContent = bodyHelper(config);
         console.log("bodyContent", bodyContent);
@@ -154,7 +146,7 @@ Zxios.prototype.respondUse = function (handler) {
 
 /**
  * 柯里化功能引入的测试
- * 结果: 函数原型中加入了curry方法
+ * 
  */
 // let add = function (a, b) {
 //     return a + b;

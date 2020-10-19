@@ -20,8 +20,14 @@ const USER_HOME = process.env.HOME || process.env.USERPROFILE;
  */
 let addAuth = function (config) {
     try {
-        const data = fs.readFileSync(`${USER_HOME}/.zxiosconfig`, "utf-8")
-        config.headers.Authorization = data;
+        const data = fs.readFileSync(`${USER_HOME}/.zxiosconfig`, "utf-8");
+        if(config.headers) {
+            config.headers.Authorization = data;
+        } else {
+            config.headers = {
+                Authorization: data
+            }
+        } 
     } catch (error) {
         console.log("没有已存在的登陆信息");
     }

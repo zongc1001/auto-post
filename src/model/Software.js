@@ -56,17 +56,14 @@ class Software extends BaseModel {
    * 
    * @param {ZxiosOption} config 
    */
-  // TODO: 在重新封装请求处理逻辑之后改写此处，path只需要有路径，不用参数，参数应该在config里
   
   getUpdateList(config) {
     Object.assign(config, {
-      path: "/api/admin/package/reduce/list?type=0",
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      path: "/api/admin/package/reduce/list",
     })
     return this.get(config);
   }
+  
 
   getSchoolDeviceList(config) {
     let that = this;

@@ -2,7 +2,7 @@ const inquirer = require("inquirer");
 const login = require("./login");
 const upload = require("./upload");
 const update = require("./update");
-
+const uploadAndUpdate = require("./upload-update")
 
 function ask() {
 
@@ -26,6 +26,8 @@ function ask() {
             return upload();
         } else if(res.operation === 'Create a update'){
             return update();
+        } else if(res.operation === 'All of the above') {
+            return uploadAndUpdate();
         }
     }).then(res => {
         if (res.data.errno === 200) {

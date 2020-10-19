@@ -16,8 +16,13 @@ let allPackageList = [];
 
 function handle(resolve, reject) {
     software
-        .getUpdateList({})
+        .getUpdateList({
+            data: {
+                type: 0
+            }
+        })
         .then(res => {
+            console.log(res);
             allPackageList = res.data.data.list;
             return software.getSchoolDeviceList({});
         })
