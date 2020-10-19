@@ -1,7 +1,7 @@
 // const path = require("path");
 const http = require("http");
-const { parse } = require("path");
-const fs = require("fs");
+const body = require("../util/body");
+const bodyHelper = require("../util/body");
 
 let util = require("./../util/util.js");
 /**
@@ -21,16 +21,21 @@ Zxios.prototype.request = function (config) {
     this.requestUseQue.forEach(x => {
         x(config);
     });
+    //TODO：使用策略模式进行封装，将
     return new Promise((resolve, reject) => {
         config = Object.assign(JSON.parse(JSON.stringify(this.defaultConfig)), config);
-        const boundaryKey = Math.random().toString(16).slice(2);
-        if (config.headers !== undefined) {
-            if (/^multipart\/form-data/.test(config.headers["Content-Type"])) {
-                config.headers["Content-Type"] = config.headers["Content-Type"].concat(
-                    `; boundary=${boundaryKey}`);
-            }
-        }
-        // console.log("最终的请求头：", config.headers);
+        // const boundaryKey = Math.random().toString(16).slice(2);
+        // if (config.headers !== undefined) {
+        //     if (/^multipart\/form-data/.test(config.headers["Content-Type"])) {
+        //         config.headers["Content-Type"] = config.headers["Content-Type"].concat(
+        //             `; boundary=${boundaryKey}`);
+        //     }
+        // }
+
+        let bodyContent = bodyHelper(config);
+        console.log("bodyContent", bodyContent);
+
+        console.log("最终的请求配置：", config);
         let req = http.request(config, (res) => {
             const contentType = res.headers["content-type"];
             const { statusCode } = res;
@@ -72,37 +77,38 @@ Zxios.prototype.request = function (config) {
             }
         })
 
+        req.write(bodyContent);
+        req.end();
 
-        if (config.headers !== undefined &&
-            /^multipart\/form-data/.test(config.headers["Content-Type"])) {
-            let temp = "";
-            Object.keys(config.data).forEach(x => {
-                let t;
-                if (x === "file") {
-                    t = `--${boundaryKey}\r\n` +
-                        `Content-Disposition: form-data; name="${x}"; filename="blob"\r\n` +
-                        `Content-Type: application/octet-stream\r\n\r\n` +
-                        `${config.data[x]}\r\n`;
-                } else {
-                    t = `--${boundaryKey}\r\n` +
-                        `Content-Disposition: form-data; name="${x}";\r\n\r\n` +
-                        `${config.data[x]}\r\n`;
-                }
+        // if (config.headers !== undefined &&
+        //     /^multipart\/form-data/.test(config.headers["Content-Type"])) {
+        //     let temp = "";
+        //     Object.keys(config.data).forEach(x => {
+        //         let t;
+        //         if (x === "file") {
+        //             t = `--${boundaryKey}\r\n` +
+        //                 `Content-Disposition: form-data; name="${x}"; filename="blob"\r\n` +
+        //                 `Content-Type: application/octet-stream\r\n\r\n` +
+        //                 `${config.data[x]}\r\n`;
+        //         } else {
+        //             t = `--${boundaryKey}\r\n` +
+        //                 `Content-Disposition: form-data; name="${x}";\r\n\r\n` +
+        //                 `${config.data[x]}\r\n`;
+        //         }
 
-                temp += t;
-            })
-            req.write(temp);
-            req.end('--' + boundaryKey + '--' + '\r\n');
+        //         temp += t;
+        //     })
+        //     req.write(temp);
+        //     req.end('--' + boundaryKey + '--' + '\r\n');
 
-        } else {
-            if(config.data) {
-                req.write(JSON.stringify(config.data));
-            } else {
-                req.write("");
-            }
-            req.end();
-
-        }
+        // } else {
+        //     if(config.data) {
+        //         req.write(JSON.stringify(config.data));
+        //     } else {
+        //         req.write("");
+        //     }
+        //     req.end();
+        // }
 
 
         req.on("error", (e) => {
